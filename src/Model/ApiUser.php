@@ -15,8 +15,6 @@ class ApiUser
 
     protected ?string $otpCode = null;
 
-    protected ?
-
     /**
      * Constructor.
      *
