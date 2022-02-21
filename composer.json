@@ -1,6 +1,6 @@
 {
-    "name": "connected-company/symfony-jupiter-bundle",
-    "description": "Client Jupiter pour dialoguer avec la GED",
+    "name": "connected-company/symfony-ar24-bundle",
+    "description": "Client AR24",
     "type": "symfony-bundle",
     "autoload": {
         "psr-4": {
