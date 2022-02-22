@@ -12,6 +12,12 @@ use Connected\AR24Bundle\Response\LREResponse;
 class AR24Client extends AbstractAR24Client implements AR24ClientInterface
 {
 
+    /**
+     * @param Attachment $attachment
+     * @return AttachmentResponse
+     * @throws AR24BundleException
+     * @throws \JsonException
+     */
     public function uploadAttachment(Attachment $attachment): AttachmentResponse
     {
         $response = $this->post(
@@ -52,12 +58,18 @@ class AR24Client extends AbstractAR24Client implements AR24ClientInterface
             ['mail' => $ids]
         );
 
-        return array_map(function ($lre) use ($response) {
+        return array_map(static function ($lre) use ($response) {
             return new LREResponse($response['status'], $lre);
         }, $response['result']);
     }
 
 
+    /**
+     * @param LRE $lre
+     * @return LREResponse
+     * @throws AR24BundleException
+     * @throws \JsonException
+     */
     public function sendLRE(LRE $lre): LREResponse
     {
         $data = [
