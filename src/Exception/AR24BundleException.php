@@ -13,7 +13,7 @@ class AR24BundleException extends \Exception
      * @param string $message Message.
      * @param integer $code Error code.
      */
-    public function __construct(string $message, int $code)
+    public function __construct(string $message, int $code = 500)
     {
         parent::__construct($message, $code);
     }

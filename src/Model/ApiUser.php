@@ -15,6 +15,8 @@ class ApiUser
 
     protected ?string $otpCode = null;
 
+    protected ?string $ar24Id = null;
+
     /**
      * Constructor.
      *
@@ -111,6 +113,24 @@ class ApiUser
 
         $this->otpCode = $otpCode;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAr24Id(): ?string
+    {
+        return $this->ar24Id;
+    }
+
+    /**
+     * @param string|null $ar24Id
+     * @return ApiUser
+     */
+    public function setAr24Id(?string $ar24Id): ApiUser
+    {
+        $this->ar24Id = $ar24Id;
         return $this;
     }
 }

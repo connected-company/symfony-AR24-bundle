@@ -9,37 +9,65 @@ use Connected\AR24Bundle\Exception\AR24BundleException;
  */
 class LRE
 {
-    private string $filepath;
+   private Destinataire $destinataire;
+
+   private ?string $content;
+
+   private array $attachements = [];
 
     /**
-     * Constructor.
-     *
-     * @param string $filepath File path.
-     *
-     * @throws AR24BundleException File does not exists.
+     * @param Destinataire $destinataire
      */
-    public function __construct(string $filepath)
+    public function __construct(Destinataire $destinataire)
     {
-        if (!file_exists($filepath)) {
-            throw new AR24BundleException('File `' . $filepath . '` does not exists', 500);
-        }
-
-        $this->filepath = $filepath;
+        $this->destinataire = $destinataire;
     }
 
     /**
-     * @return string
+     * @return Destinataire
      */
-    public function getFilepath(): string
+    public function getDestinataire(): Destinataire
     {
-        return $this->filepath;
+        return $this->destinataire;
     }
 
     /**
-     * @param string $filepath
+     * @param Destinataire $destinataire
      */
-    public function setFilepath(string $filepath): void
+    public function setDestinataire(Destinataire $destinataire): void
     {
-        $this->filepath = $filepath;
+        $this->destinataire = $destinataire;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    /**
+     * @param string|null $content
+     */
+    public function setContent(?string $content): void
+    {
+        $this->content = $content;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAttachements(): array
+    {
+        return $this->attachements;
+    }
+
+    /**
+     * @param array $attachements
+     */
+    public function setAttachements(array $attachements): void
+    {
+        $this->attachements = $attachements;
     }
 }

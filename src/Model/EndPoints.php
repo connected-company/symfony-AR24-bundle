@@ -11,7 +11,7 @@ class EndPoints
     public const POST_LRE = 'mail/';
 
     // Get informations about an email.
-    public const GET_LR_INFO = 'mail/';
+    public const GET_LRE_INFO = 'mail/';
 
     // Post an attachment.
     public const POST_ATTACHMENT = 'attachment/';
