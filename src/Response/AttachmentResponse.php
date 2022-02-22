@@ -13,19 +13,13 @@ class AttachmentResponse
     private $id;
 
     /**
-     * @var string|null
-     */
-    private $url;
-
-    /**
      * Constructor.
      *
      * @param array $data Response data.
      */
     public function __construct(array $data)
     {
-        $this->id = $data['id'] ?? null;
-        $this->url = $data['download_url'] ?? null;
+        $this->id = $data['file_id'] ?? null;
     }
 
     /**
@@ -34,13 +28,5 @@ class AttachmentResponse
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getUrl(): ?string
-    {
-        return $this->url;
     }
 }

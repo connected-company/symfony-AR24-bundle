@@ -13,7 +13,7 @@ class LRE
 
    private ?string $content;
 
-   private array $attachements = [];
+   private array $attachments = [];
 
     /**
      * @param Destinataire $destinataire
@@ -58,16 +58,28 @@ class LRE
     /**
      * @return array
      */
-    public function getAttachements(): array
+    public function getattachments(): array
     {
-        return $this->attachements;
+        return $this->attachments;
     }
 
     /**
-     * @param array $attachements
+     * @param array $attachments
      */
-    public function setAttachements(array $attachements): void
+    public function setattachments(array $attachments): void
     {
-        $this->attachements = $attachements;
+        $this->attachments = $attachments;
+    }
+
+    /**
+     * @param Attachment $attachment Attachment.
+     *
+     * @return self
+     */
+    public function addAttachment(Attachment $attachment): self
+    {
+        $this->attachments[] = $attachment;
+
+        return $this;
     }
 }
