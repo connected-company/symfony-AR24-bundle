@@ -103,7 +103,7 @@ class AbstractAR24Client
 
         if ($attachment) {
             if (!($attachment instanceof Attachment)) {
-                throw new AR24BundleException('Attachements not instance of ' . Attachment::class);
+                throw new AR24BundleException('Attachments not instance of ' . Attachment::class);
             }
             $data['multipart'][] = ['name' => 'file', 'contents' => fopen($attachment->getFilepath(), 'rb')];
         }

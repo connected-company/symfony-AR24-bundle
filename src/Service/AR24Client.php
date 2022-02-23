@@ -80,10 +80,9 @@ class AR24Client extends AbstractAR24Client implements AR24ClientInterface
             'dest_statut' => $lre->getDestinataire()->getStatus(),
             'ref_client' => $lre->getDestinataire()->getReference(),
             'content' => $lre->getContent(),
-            ''
         ];
 
-        foreach ($lre->getAttachements() as $key => $attachment) {
+        foreach ($lre->getAttachments() as $key => $attachment) {
             if ($attachment instanceof AttachmentResponse){
                 $data['attachment[' . $key . ']'] = $attachment->getId();
             }

@@ -18,7 +18,7 @@ class LREResponse extends StatusResponse
 
     protected ?string $referenceDossier;
 
-    protected ?string $sendFail;
+    protected ?bool $sendFail;
 
     protected ?array $attachments;
 
@@ -144,7 +144,7 @@ class LREResponse extends StatusResponse
     }
 
     /**
-     * @param mixed|string|null $sendFail
+     * @param bool|null $sendFail
      */
     public function setSendFail($sendFail): void
     {
