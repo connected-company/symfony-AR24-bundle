@@ -1,5 +1,6 @@
 # Symfony AR24 Bundle
-####Client AR24 pour création de LRE
+Client AR24 pour création de LRE
+
 Auteur : Corentin Robardey (crobardey@com-company.fr)
 ## installation avec composer
 ajouter dans composer.json
