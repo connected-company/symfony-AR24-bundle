@@ -12,7 +12,7 @@ ajouter dans composer.json
 
 Exécutez ensuite
 ```bash
-$ composer connected-company/symfony-ar24-bundle
+$ composer require connected-company/symfony-ar24-bundle
 ```
 Si vous n'utilisez pas symfony/flex, ajoutez la ligne suivante dans config/bundles.php :
 ```php
