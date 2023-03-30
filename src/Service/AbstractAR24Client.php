@@ -4,6 +4,7 @@ namespace Connected\AR24Bundle\Service;
 
 
 use Connected\AR24Bundle\Exception\AR24BundleException;
+use Connected\AR24Bundle\Exception\AR24InvalidEmailException;
 use Connected\AR24Bundle\Model\ApiUser;
 use Connected\AR24Bundle\Model\Attachment;
 use Connected\AR24Bundle\Model\EndPoints;
@@ -84,8 +85,8 @@ class AbstractAR24Client
      * @throws \JsonException
      */
     public function post(
-        string  $endPoint,
-        array   $parameters = [],
+        string      $endPoint,
+        array       $parameters = [],
         ?Attachment $attachment = null
     ): array
     {
@@ -120,10 +121,14 @@ class AbstractAR24Client
         $response = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
         if (isset($response['status']) && strtolower($response['status']) === 'maintenance') {
-            throw new AR24BundleException('AR24 est actuellement en maintenance.',422);
+            throw new AR24BundleException('AR24 est actuellement en maintenance.', 422);
         }
 
         if (isset($response['status']) && strtolower($response['status']) === 'error') {
+            if (isset($response['slug']) &&
+                (strtolower($response['slug']) === 'invalid_email' || strtolower($response['slug']) === 'invalid_recipient')) {
+                throw new AR24InvalidEmailException($response['message']);
+            }
             throw new AR24BundleException($response['message'], 422);
         }
 
