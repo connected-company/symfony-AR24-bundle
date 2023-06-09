@@ -8,25 +8,23 @@ use Connected\AR24Bundle\Exception\AR24InvalidEmailException;
 use Connected\AR24Bundle\Model\ApiUser;
 use Connected\AR24Bundle\Model\Attachment;
 use Connected\AR24Bundle\Model\EndPoints;
-use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mime\Part\DataPart;
+use Symfony\Component\Mime\Part\Multipart\FormDataPart;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 
 class AbstractAR24Client
 {
-    protected Client $client;
-
-    protected string $apiUrl;
-
-    protected ApiUser $apiUser;
-
-    public function __construct(string $apiUrl, ApiUser $apiUser)
+    public function __construct(
+        protected string $apiUrl,
+        protected ApiUser $apiUser,
+        private HttpClientInterface $client)
     {
-        $this->apiUrl = $apiUrl;
-        $this->apiUser = $apiUser;
-        $this->client = new Client(
-            [
-                'base_uri' => $this->apiUrl
+        $this->client = $this->client->withOptions([
+                'base_uri' => $this->apiUrl,
             ]
         );
     }
@@ -39,7 +37,8 @@ class AbstractAR24Client
     {
         try {
             $response = $this->processAR24Response(
-                $this->client->get(
+                $this->client->request(
+                    Request::METHOD_GET,
                     EndPoints::GET_USER . '?' . http_build_query(
                         ['email' => $this->apiUser->getEmail(), 'token' => $this->apiUser->getToken()]
                     )
@@ -63,7 +62,8 @@ class AbstractAR24Client
     {
         $this->checkCredential();
 
-        $response = $this->client->get(
+        $response = $this->client->request(
+            Request::METHOD_GET,
             $endPoint . '?' . http_build_query(
                 array_merge(
                     $parameters,
@@ -92,33 +92,46 @@ class AbstractAR24Client
     {
         $this->checkCredential();
 
-        $data['multipart'] = [
-            ['name' => 'token', 'contents' => $this->apiUser->getToken()],
-            ['name' => 'id_user', 'contents' => $this->apiUser->getAr24Id()],
+        $parts = [
+            'token' => $this->apiUser->getToken(),
+            'id_user' => $this->apiUser->getAr24Id()
         ];
-
         foreach ($parameters as $key => $value) {
-            $data['multipart'][] = ['name' => $key, 'contents' => $value];
+            $parts[$key] = $value ?? '';
         }
 
-
         if ($attachment) {
+            $explodedPath = explode(DIRECTORY_SEPARATOR, $attachment->getFilepath());
+            $filename = $explodedPath[count($explodedPath)-1];
+            $fileContent = @file_exists($attachment->getFilepath()) ? file_get_contents($attachment->getFilepath()) : $attachment->getFilepath();
             if (!($attachment instanceof Attachment)) {
                 throw new AR24BundleException('Attachments not instance of ' . Attachment::class);
             }
-            $data['multipart'][] = ['name' => 'file', 'contents' => fopen($attachment->getFilepath(), 'rb')];
+            $parts['file'] = new DataPart($fileContent, pathinfo($filename, PATHINFO_FILENAME));
         }
+        $formData = new FormDataPart($parts);
 
-        return $this->processAR24Response($this->client->post($endPoint, $data));
+        $data = [
+            'headers' => $formData->getPreparedHeaders()->toArray(),
+            'body' => $formData->bodyToIterable(),
+        ];
+
+        return $this->processAR24Response(
+            $this->client->request(
+                Request::METHOD_POST,
+                $endPoint,
+                $data
+            )
+        );
     }
 
     /**
      * @throws \JsonException
      * @throws AR24BundleException
      */
-    private function processAR24Response(Response $response)
+    private function processAR24Response(ResponseInterface $response)
     {
-        $response = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         if (isset($response['status']) && strtolower($response['status']) === 'maintenance') {
             throw new AR24BundleException('AR24 est actuellement en maintenance.', 422);
