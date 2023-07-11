@@ -107,7 +107,7 @@ class AbstractAR24Client
             if (!($attachment instanceof Attachment)) {
                 throw new AR24BundleException('Attachments not instance of ' . Attachment::class);
             }
-            $parts['file'] = new DataPart($fileContent, pathinfo($filename, PATHINFO_FILENAME));
+            $parts['file'] = new DataPart($fileContent, $filename);
         }
         $formData = new FormDataPart($parts);
 
